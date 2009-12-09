@@ -1,0 +1,7 @@
+en:
+  lumberjack:
+    create: "{{user_name}} created a {{class}}"
+    update: "{{user_name}} updated a {{class}}"
+    
+    custom:
+      create: "{{user_name}} is proud to announce that his new {{class}} has been created!"

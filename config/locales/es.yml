@@ -1,0 +1,4 @@
+es:
+  lumberjack:
+    create: "{{user_name}} creó un {{class}}"
+    update: "{{user_name}} actualizó un {{class}}"

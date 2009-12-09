@@ -1,0 +1,90 @@
+Lumberjack
+==========
+Lumberjack is a rails engine to allow logging user actions with specific model and display nice message notifications.
+You will be able to generate things like:
+
+  MyUser updated his profile.
+  MyUser created a new photo album. (6 minutes ago)
+
+
+Installation
+============
+ADD A GENERATOR!!!
+$ ./script/generate Lumberjack
+
+Add the module in your model. Remember that you must have a user model and the object you're logging must belong to user. Also the user should have a name by default, but this requirement can be ignored if you customize your messages (see below).
+
+app/models/my_model.rb
+
+class MyModel << ActiveRecord::base
+  belongs_to :user
+  include Lumberjack
+
+  // Other code here
+end
+
+By default, Lumberjack will look in your locale for [locale].lumberjack.[action], for example:
+
+en.yml
+
+en:
+  lumberjack:
+    create: "{{user_name}} created a {{class}}"
+    update: "{{user_name}} updated a {{class}}"
+
+You have only the user_name and the class of the object being created / updated available by default. see Adding specific data to the log below if you need custom fields.
+
+Now in your view, you can retrieve a log and use the function humanize to display the message:
+
+<% @user.logs.each do |log| %>
+  <%= log.humanize -%>
+<% end %>
+
+Adding specific messages to a model
+===================================
+The listeners that will save your logs are going to look under the loggable_message_locale function to write your message.
+By default this will be the name of the action being executed ('create', 'update').
+
+class MyModel << ActiveRecord::base
+  belongs_to :user
+  include Lumberjack
+
+  def loggable_message_locale
+    'my_model.create'
+  end
+
+  // Other code here
+end
+
+
+so, when you create a new instance of your model, Lumberjack will look for 'lumberjack.my_model.create' in your locale:
+
+en.yml
+-
+en:
+  lumberjack:
+    my_model:
+      create: "{{user_name}} is proud to announce his new object of class {{class}}. Check it out!"
+
+Adding specific data to the log.
+================================
+
+If you need to add data that is specific from your model you should define 'loggable_default_locale_options' and return a hash containing all the specific data you want to show (you'll have to pass user_name and class again if you need it).
+
+class MyModel << ActiveRecord::base
+  belongs_to :user
+  include Lumberjack
+  # Default options for the localizing of logs
+  def loggable_default_locale_options
+    { :user_name => user.name, :class => self.class.human_name, :quantity_of_photos => photos.size }
+  end
+  
+  # Other code here
+end
+
+Forced logging
+==============
+You can always force a log creation using the UserLog class:
+
+UserLog.create(:user => @user, :action => 'my_action', :message => 'my_model.my_action')
+
