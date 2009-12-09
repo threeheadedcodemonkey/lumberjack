@@ -7,6 +7,10 @@ You will be able to generate things like:
   MyUser created a new photo album. (6 minutes ago)
 
 
+NOTICE
+======
+For some reason if you want to override the default locale you will need to remove config/locales/*
+
 Installation
 ============
 ADD A GENERATOR!!!
