@@ -58,9 +58,19 @@ class LumberJackPluginTest < ActiveSupport::TestCase
   test "Defining a message works as expected" do
     I18n.locale = 'en'
     @user = User.create(:name => 'Joe User')
-    @foo = Bar.create(:user_id => @user.id)
+    @bar = Bar.create(:user_id => @user.id)
     @log = UserLog.find_all_by_user_id(@user.id).first
     assert_equal "Joe User is proud to announce that his new Bar has been created!", @log.humanize
+  end
+
+  test "UserLog should be removed if the logged object is removed" do
+    @user = User.create(:name => 'Joe User')
+    @bar = Bar.create(:user_id => @user.id)
+    @log = UserLog.find_all_by_user_id(@user.id).first
+    assert !UserLog.find_all_by_user_id(@user.id).empty?
+    @bar.destroy
+    assert UserLog.find_all_by_user_id(@user.id).empty?
+    
   end
     
 end

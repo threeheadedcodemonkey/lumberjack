@@ -15,4 +15,5 @@ class UserLogTest < ActiveSupport::TestCase
     assert_not_nil reflection
     assert_equal :belongs_to, reflection.macro
   end
+
 end
